@@ -50,7 +50,7 @@
     <p><span class="modal-label">Required number of students:</span> {{ selectedSujet.numberOfStudents }}</p>
     <div *ngIf="selectedSujet.imageUrl" class="text-center mb-3">
       <img [src]="selectedSujet.imageUrl" alt="Image for {{ selectedSujet.title }}"
-           class="img-fluid rounded shadow-sm" style="max-height: 200px; object-fit: cover;" />
+           class="img-fluid rounded shadow-sm" style="max-height: 200px; object-fit: cover;"  />
     </div>
     <button class="btn btn-primary btn-sky-blue" (click)="postulate(selectedSujet.idsujet)">Postulate</button>
   </div>

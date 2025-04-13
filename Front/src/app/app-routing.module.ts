@@ -20,6 +20,7 @@ import { CreateadminComponent } from './componment/back/subjectadmin/create/crea
 import { UpdateadminComponent } from './componment/back/subjectadmin/update/update.component';
 import { PostulationsSpComponent } from './componment/back/subjectadmin/postulations/postulations.component';
 import { AddPComponent } from './componment/front/postulations/add/add.component';
+import { SummaryComponent } from './componment/front/postulations/summary/summary.component';
 
 const routes: Routes = [
 
@@ -43,7 +44,8 @@ const routes: Routes = [
   {path: 'adminsujetedit/:id', component: UpdateadminComponent},
   { path: 'postulationbysujet/:idsujet', component: PostulationsSpComponent },
   {path: 'postulationsadmin', component: AllPostulationsComponent},
- 
+      {path: 'summary', component: SummaryComponent},
+
   {path: 'create/postulation/:idsujet', component: AddPComponent},
 
 

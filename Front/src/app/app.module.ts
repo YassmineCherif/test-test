@@ -26,6 +26,8 @@ import { UpdateadminComponent } from './componment/back/subjectadmin/update/upda
 import { PostulationsSpComponent } from './componment/back/subjectadmin/postulations/postulations.component';
 import { AllPostulationsComponent } from './componment/back/postulation-admin/allpostulations/allpostulations.component';
 import { AddPComponent } from './componment/front/postulations/add/add.component';
+import { SummaryComponent } from './componment/front/postulations/summary/summary.component';
+import { NgChartsModule } from 'ng2-charts';
 @NgModule({
   declarations: [
     AppComponent,
@@ -50,13 +52,15 @@ import { AddPComponent } from './componment/front/postulations/add/add.component
     UpdateadminComponent,
     PostulationsSpComponent,
     AllPostulationsComponent,
-    AddPComponent
+    AddPComponent,
+    SummaryComponent
     
     
     
 
   ],
   imports: [
+    NgChartsModule,
     BrowserModule,
     AppRoutingModule,
     FormsModule,

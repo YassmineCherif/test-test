@@ -42,7 +42,7 @@ public class PostulationService implements IPostulationService {
 
         // Set the fetched intershipOffer to the postulation
         postulation.setIntershipOffer(intershipOffer);
-
+        postulation.setStudentid(1L);
         // Save and return the postulation
         return postulationRepository.save(postulation);
     }
@@ -115,7 +115,7 @@ public class PostulationService implements IPostulationService {
 
         // Set status to "Accepted"
         postulation.setStatus(1);
-        sendConfirmationEmail(postulation , 1L);
+        sendConfirmationEmail(postulation , postulation.getStudentid());
         postulationRepository.save(postulation);
 
         // Count the number of accepted postulations for this subject
@@ -137,7 +137,7 @@ public class PostulationService implements IPostulationService {
         Postulation postulation = postulationRepository.findById(postulationId)
                 .orElseThrow(() -> new RuntimeException("Postulation not found with id: " + postulationId));
         postulation.setStatus(2); // Set status to "Rejected"
-        sendRejectionEmail(postulation , 1L);
+        sendRejectionEmail(postulation , postulation.getStudentid());
         postulationRepository.save(postulation); // Save the updated postulation
     }
 

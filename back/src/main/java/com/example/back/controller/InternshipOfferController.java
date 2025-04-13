@@ -50,7 +50,11 @@ public class InternshipOfferController {
     @PostMapping("/addoff")
     public IntershipOffer addIntershipOffer(@RequestBody IntershipOffer off) {
         return iInternshipOfferservice.addIntershipOffer(off);
+
     }
+
+
+
 
     @DeleteMapping("/remove/off/{id}")
     public void removePos(@PathVariable("id") Long id) {

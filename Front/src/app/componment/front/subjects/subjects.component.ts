@@ -148,4 +148,6 @@ export class SubjectsComponent implements OnInit {
   mappedTypeInternship(type: TypeInternship): string {
     return this.typeInternshipMapping[type] || type;
   }
+
+  
 }

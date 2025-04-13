@@ -196,3 +196,24 @@ h4::after {
   color: white; /* White text when hovered */
   padding: 10px 20px; /* Padding for the button */
 }
+
+
+/* Style for the Summary image */
+.summary-img {
+  width: 80px; /* Adjust the size of the image */
+  height: auto;
+  cursor: pointer;
+   transition: transform 0.3s ease;
+}
+
+/* Hover effect for the image */
+.summary-img:hover {
+  transform: scale(1.1); /* Slightly enlarge the image when hovered */
+}
+
+/* Optional: Make sure the image is responsive */
+@media (max-width: 768px) {
+  .summary-img {
+    width: 40px; /* Adjust for smaller screens */
+  }
+}
