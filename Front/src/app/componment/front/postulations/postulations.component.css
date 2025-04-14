@@ -37,7 +37,7 @@ h4::after {
   content: '';
   width: 80px;
   height: 4px;
-  background: #b90000; /* Matching red underline */
+  background: #b90000; 
   position: absolute;
   bottom: -10px;
   left: 50%;

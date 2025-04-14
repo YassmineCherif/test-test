@@ -4,6 +4,7 @@ import com.example.back.entities.IntershipOffer;
 import com.example.back.entities.Postulation;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 

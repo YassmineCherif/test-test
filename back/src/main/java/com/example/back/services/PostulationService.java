@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.UUID;
 
@@ -26,11 +27,10 @@ import java.util.UUID;
 @AllArgsConstructor
 @Slf4j
 public class PostulationService implements IPostulationService {
-    private static final String UPLOAD_DIR = "uploads/pdfs/";
-    private final InternshipOfferRepository internshipOfferRepository;
+     private final InternshipOfferRepository internshipOfferRepository;
     PostulationRepository postulationRepository;
     UserService userService;
-
+    private static final String UPLOAD_DIR = System.getProperty("user.dir") + "/uploads/pdfs/";
 
     @Autowired
     private MailCheckService emailService;
@@ -146,47 +146,6 @@ public class PostulationService implements IPostulationService {
         return postulationRepository.findByStatus(status);  // Assuming you have this method in your repository
     }
 
-    public String uploadPdf(Long postulationId, MultipartFile file) {
-        Postulation postulation = postulationRepository.findById(postulationId)
-                .orElseThrow(() -> new RuntimeException("Postulation not found"));
-
-        String fileUrl = saveFile(file); // Save the file and get the URL
-        System.out.println("✅ PDF URL saved: " + fileUrl);
-
-        postulation.setPdfUrl(fileUrl);
-        postulationRepository.save(postulation);
-
-        return fileUrl;
-    }
-
-   
-    public Postulation getPostulationWithPdf(Long id) {
-        Postulation postulation = postulationRepository.findById(id).orElse(null);
-        if (postulation == null || postulation.getPdfUrl() == null) {
-            return null;  // Return null if no postulation or no PDF
-        }
-        return postulation;  // Return the postulation with the PDF URL
-    }
-
-    // Method to save the file
-    private String saveFile(MultipartFile file) {
-        try {
-            File uploadDir = new File(UPLOAD_DIR);
-            if (!uploadDir.exists()) {
-                uploadDir.mkdirs();
-            }
-
-            String uniqueFileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
-            Path filePath = Paths.get(UPLOAD_DIR, uniqueFileName);
-            Files.write(filePath, file.getBytes());
-
-            System.out.println("File saved at: " + filePath);
-
-            return "http://localhost:9091/files/" + uniqueFileName;
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to save file", e);
-        }
-    }
 
 
 
@@ -222,6 +181,66 @@ public class PostulationService implements IPostulationService {
         } else {
             System.out.println("Student not found with ID: " + studentId);
         }
+    }
+
+
+
+
+    @Override
+    public String uploadPdf(Long postulationId, MultipartFile file, boolean deleteExistingPdf) {
+        validatePdfFile(file);
+
+        Postulation postulation = postulationRepository.findById(postulationId)
+                .orElseThrow(() -> new RuntimeException("Postulation not found"));
+
+        if (deleteExistingPdf && postulation.getPdfUrl() != null) {
+            deletePdfFile(postulation.getPdfUrl());
+        }
+
+        String fileName = saveFile(file);
+        postulation.setPdfUrl(fileName);
+        postulationRepository.save(postulation);
+
+        return fileName;
+    }
+    private void validatePdfFile(MultipartFile file) {
+        if (file == null || file.isEmpty()) {
+            throw new RuntimeException("PDF file is empty");
+        }
+        if (!"application/pdf".equals(file.getContentType())) {
+            throw new RuntimeException("Only PDF files are allowed");
+        }
+    }
+    private String saveFile(MultipartFile file) {
+        try {
+            Path uploadPath = Paths.get(UPLOAD_DIR);
+            if (!Files.exists(uploadPath)) {
+                Files.createDirectories(uploadPath);
+            }
+
+            String fileName = UUID.randomUUID().toString() + "" + file.getOriginalFilename().replace(" ", "_");
+            Path filePath = uploadPath.resolve(fileName);
+            System.out.println("Saving file to: " + filePath.toAbsolutePath());
+
+            Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+            return fileName;
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to save PDF file", e);
+        }
+    }
+    private void deletePdfFile(String fileName) {
+        try {
+            Path filePath = Paths.get(UPLOAD_DIR, fileName);
+            System.out.println("Deleting file: " + filePath.toAbsolutePath());
+            Files.deleteIfExists(filePath);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to delete PDF file", e);
+        }
+    }
+    @Override
+    public Postulation getPostulationWithPdf(Long id) {
+        return postulationRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Postulation not found"));
     }
 
 

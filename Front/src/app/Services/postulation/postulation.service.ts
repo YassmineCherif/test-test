@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { catchError, Observable, throwError } from 'rxjs';
 import { postulation } from 'src/app/models/postulation';
 
 @Injectable({
@@ -25,8 +25,6 @@ export class PostulationService {
   getPostulationsByStudentId(studentId: number): Observable<postulation[]> {
     return this.http.get<postulation[]>(`${this.baseUrl}/student/${studentId}`);
   }
-
-
 
   // Ajouter une nouvelle postulation
   addPostulation(postulation: postulation, idsujet: number): Observable<postulation> {
@@ -63,15 +61,38 @@ export class PostulationService {
     return this.http.put<void>(`${this.baseUrl}/reject/${postulationId}`, {});
   }
 
-  // Upload PDF
-  uploadPdf(postulationId: number, file: File): Observable<{ pdfUrl: string }> {
+  updatePdf(postulationId: number, file: File, deleteExistingPdf: boolean = false): Observable<string> {
     const formData = new FormData();
-    formData.append('file', file);
-    return this.http.post<{ pdfUrl: string }>(`${this.baseUrl}/${postulationId}/uploadPdf`, formData);
+    formData.append('file', file, file.name);
+  
+    return this.http.put(`${this.baseUrl}/${postulationId}/updatePdf?deleteExistingPdf=${deleteExistingPdf}`, formData, {
+      responseType: 'text'
+    }).pipe(
+      catchError(this.handleError)
+    );
   }
-
-  // Get PDF URL
-  getPdfUrl(postulationId: number): Observable<Blob> {
-    return this.http.get(`${this.baseUrl}/${postulationId}/pdf`, { responseType: 'blob' });
+  
+  // Added back this function
+  getPdfBlob(postulationId: number): Observable<Blob> {
+    return this.http.get(`${this.baseUrl}/${postulationId}/pdf`, { responseType: 'blob' }).pipe(
+      catchError(this.handleError)
+    );
   }
+  
+  private handleError(error: HttpErrorResponse) {
+    let errorMessage = 'An unknown error occurred!';
+    if (error.error instanceof ErrorEvent) {
+      errorMessage = `Error: ${error.error.message}`;
+    } else {
+      errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
+      if (error.error?.message) {
+        errorMessage += `\nDetails: ${error.error.message}`;
+      }
+    }
+    console.error(errorMessage);
+    return throwError(() => new Error(errorMessage));
+  }
+  
+  
+  
 }

@@ -22,6 +22,10 @@ public interface IPostulationService {
 
 
     void rejectPostulation(Long postulationId);
-    String uploadPdf(Long postulationId, MultipartFile file); // Upload PDF for a postulation
-    Postulation getPostulationWithPdf(Long id);
+     Postulation getPostulationWithPdf(Long id);
+
+
+    String uploadPdf(Long postulationId, MultipartFile file, boolean deleteExistingPdf); // Add the deleteExistingPdf parameter here.
+
+
 }
